@@ -189,27 +189,57 @@ AddEmp = () => {
             type: 'input',
             name: 'last',
             message: 'Please enter a last name:'
-        },
-        {
-            type: 'input',
-            name: 'role',
-            message: 'Please enter a role id:'
-        },
-        {
-            type: 'input',
-            name: 'manager',
-            message: 'Please enter a manager id:'
         }
     ]).then(data => {
-        const parameters = [data.first, data.last, data.role, data.manager];
-        const sql = `INSERT INTO employee
-                    (first_name, last_name, role_id, manager_id)
-                    VALUES (?, ?, ?, ?)`;
-        db.query(sql, parameters);
-        viewEmployees();
+        const parameters = [data.first, data.last];
+        const roleSQL = `SELECT role.id, role.title FROM role`;
+
+        db.query(roleSQL, (err, row) => {
+            const rolesMap = row.map( ({id, title}) => ({value: id, name: title}) );
+            //console.log(rolesMap);
+            inquirer.prompt([
+                {
+                    type: 'list', 
+                    name: 'roleChoice',
+                    message: "Please choose a role:",
+                    choices: rolesMap
+                }
+            ])
+            .then(answer => {
+                const roleID = answer.roleChoice;
+                parameters.push(roleID);
+                console.log(parameters);
+
+                const mgrSQL = `SELECT * FROM employee`;
+                db.query(mgrSQL, (err, row) => {
+                    const mgrMap = row.map( ({id, first_name, last_name}) => ({value: id, name: first_name + ' ' + last_name}) );
+                    inquirer.prompt([
+                        {
+                          type: 'list',
+                          name: 'manager',
+                          message: "Who is the manager?",
+                          choices: mgrMap
+                        }
+                    ])
+                    .then(final => {
+                        const manager = final.manager;
+                        parameters.push(manager);
+                        console.log(parameters);
+    
+                        const sql = `INSERT INTO employee
+                                    (first_name, last_name, role_id, manager_id)
+                                    VALUES (?, ?, ?, ?)`;
+                        db.query(sql, parameters);
+                    })
+                    .then(viewEmployees);
+                });
+            });
+        });
     });
 };
 
 UpEmpRole = () => {
 
 }
+
+//Choices: Array values can be objects containing a name (to display in list), a value (to save in the answers hash)
