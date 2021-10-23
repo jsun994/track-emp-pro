@@ -32,4 +32,20 @@ const promptUser = () => {
             ]
         }
     ])
+    .then((answers) => {
+        if (answers.choices === 'View all departments') {
+            viewDepartments();
+        }
+    })
+};
+
+viewDepartments = () => {
+    console.log('all departments:');
+    const sql = `SELECT * FROM department`;
+    
+    db.promise().query(sql)
+    .then(([rows]) => {
+        console.table(rows);
+    })
+    .then(promptUser);
 };
