@@ -11,7 +11,7 @@ const db = mysql.createConnection({
 
 db.connect(err => {
     if (err) throw err;
-    console.log('database connected.');
+    console.log('database connected');
     promptUser();
 });
 
@@ -67,7 +67,6 @@ viewDepartments = () => {
                 department.name AS department_name,
                 department.id AS department_id
                 FROM department`;
-    
     db.promise().query(sql)
     .then( ([rows]) => {
         console.table(rows);
@@ -86,7 +85,6 @@ viewRoles = () => {
                 LEFT JOIN department
                 ON role.department_id = department.id
                 `;
-    
     db.promise().query(sql)
     .then( ([rows]) => {
         console.table(rows);
@@ -109,7 +107,6 @@ viewEmployees = () => {
                 LEFT JOIN department ON role.department_id = department.id
                 LEFT JOIN employee mgr ON emp.manager_id = mgr.id
                 `;
-    
     db.promise().query(sql)
     .then( ([rows]) => {
         console.table(rows);
@@ -117,6 +114,7 @@ viewEmployees = () => {
     .then(promptUser);
 };
 
+//add dept
 addDepartment = () => {
     inquirer.prompt([
         {
@@ -124,13 +122,15 @@ addDepartment = () => {
             name: 'department',
             message: 'Please enter a department:'
         }
-    ]).then(data => {
+    ])
+    .then(data => {
         const sql = `INSERT INTO department (name) VALUES (?)`;
         db.query(sql, data.department);
         viewDepartments();
     });
 };
 
+//add role
 addRole = () => {
     inquirer.prompt([
         {
@@ -143,31 +143,28 @@ addRole = () => {
             name: 'salary',
             message: 'Please enter a salary:'
         }
-    ]).then(data => {
+    ])
+    .then(data => {
         const parameters = [data.title, data.salary];
-
         const departmentSQL = `SELECT * FROM department`;
         db.query(departmentSQL, (err, row) => {
             if (err) throw err;
-
             inquirer.prompt([
                 {
                     type: 'list', 
                     name: 'departChoice',
-                    message: "Please choice a department:",
+                    message: 'Please choice a department:',
                     choices: row
                 }
             ])
             .then(answer => {
-                let departID;
+                let deptID;
                 for (let i = 0; i < row.length; i++){
                     if (answer.departChoice == row[i].name){
-                        departID = row[i].id;
+                        deptID = row[i].id;
                     }
                 }
-                parameters.push(departID);
-                console.log(parameters);
-
+                parameters.push(deptID);
                 const sql = `INSERT INTO role
                             (title, salary, department_id)
                             VALUES (?, ?, ?)`;
@@ -193,39 +190,37 @@ AddEmp = () => {
     ]).then(data => {
         const parameters = [data.first, data.last];
         const roleSQL = `SELECT role.id, role.title FROM role`;
-
         db.query(roleSQL, (err, row) => {
+            if (err) throw err;
+            console.log(row);
             const rolesMap = row.map( ({id, title}) => ({value: id, name: title}) );
-            //console.log(rolesMap);
+            console.log(rolesMap);
             inquirer.prompt([
                 {
                     type: 'list', 
                     name: 'roleChoice',
-                    message: "Please choose a role:",
+                    message: 'Please choose a role:',
                     choices: rolesMap
                 }
             ])
             .then(answer => {
                 const roleID = answer.roleChoice;
                 parameters.push(roleID);
-                console.log(parameters);
-
                 const mgrSQL = `SELECT * FROM employee`;
                 db.query(mgrSQL, (err, row) => {
+                    if (err) throw err;
                     const mgrMap = row.map( ({id, first_name, last_name}) => ({value: id, name: first_name + ' ' + last_name}) );
                     inquirer.prompt([
                         {
                           type: 'list',
                           name: 'manager',
-                          message: "Who is the manager?",
+                          message: 'Please choose a manager:',
                           choices: mgrMap
                         }
                     ])
                     .then(final => {
                         const mgrID = final.manager;
                         parameters.push(mgrID);
-                        console.log(parameters);
-    
                         const sql = `INSERT INTO employee
                                     (first_name, last_name, role_id, manager_id)
                                     VALUES (?, ?, ?, ?)`;
@@ -240,24 +235,23 @@ AddEmp = () => {
 
 UpEmpRole = () => {
     const empSQl = `SELECT * FROM employee`;
-
     db.query(empSQl, (err, row) => {
+        if (err) throw err;
         const empMap = row.map( ({id, first_name, last_name}) => ({value: id, name: first_name + ' ' + last_name}) );
-        
         inquirer.prompt([
             {
               type: 'list',
               name: 'empName',
-              message: "Please choose an employee to update:",
+              message: 'Please choose an employee to update:',
               choices: empMap
             }
         ])
         .then(answer => {
-            const employee = answer.empName;
-            const parameters = [employee];
-
+            const empID = answer.empName;
+            const parameters = [empID];
             const roleSQL = `SELECT * FROM role`;
             db.query(roleSQL, (err, row) => {
+                if (err) throw err;
                 const roleMap = row.map( ({id, title}) => ({value: id, name: title}) );
                 inquirer.prompt([
                     {
@@ -270,15 +264,12 @@ UpEmpRole = () => {
                 .then(final => {
                     const nRole = final.nRole;
                     parameters.push(nRole); 
-                    console.log(parameters);
-                    
+                    //swap
                     const rID = parameters[1];
                     const eID = parameters[0];
-                    let sqlOrder = [];
+                    const sqlOrder = [];
                     sqlOrder.push(rID);
                     sqlOrder.push(eID);
-                    console.log(sqlOrder);
-
                     const sql = `UPDATE employee
                                 SET role_id = ?
                                 WHERE id = ?`;
@@ -289,5 +280,4 @@ UpEmpRole = () => {
         });
     });
 };
-
-//Choices: Array values can be objects containing a name (to display in list), a value (to save in the answers hash)
+//Choices: Array values can be objects containing a name (to display in list), a value (to save in the answers hash).
