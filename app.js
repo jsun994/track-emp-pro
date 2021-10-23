@@ -53,7 +53,7 @@ const promptUser = () => {
             AddEmp();
         }
         if (answers.choice === 'Update an employee role') {
-            AddEmpRole();
+            UpEmpRole();
         }
         if (answers.choice === 'Quit') {
             process.exit();
@@ -78,8 +78,8 @@ viewDepartments = () => {
 viewRoles = () => {
     console.log('all roles:');
     const sql = `SELECT
-                role.id AS role_id,
                 role.title AS job_title,
+                role.id AS role_id,
                 role.salary,
                 department.name AS department_name
                 FROM role
@@ -189,3 +189,7 @@ AddEmp = () => {
         viewEmployees();
     });
 };
+
+UpEmpRole = () => {
+
+}
