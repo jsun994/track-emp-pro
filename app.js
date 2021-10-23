@@ -120,7 +120,15 @@ addDepartment = () => {
         {
             type: 'input',
             name: 'department',
-            message: 'Please enter a department:'
+            message: 'Please enter a department:',
+            validate: aDept => {
+                if (aDept) {
+                    return true;
+                } else {
+                    console.log('Please enter a department!');
+                    return false;
+                }
+            }
         }
     ])
     .then(data => {
@@ -136,12 +144,28 @@ addRole = () => {
         {
             type: 'input',
             name: 'title',
-            message: 'Please enter a role:'
+            message: 'Please enter a role:',
+            validate: aRole => {
+                if (aRole) {
+                    return true;
+                } else {
+                    console.log('Please enter a role!');
+                    return false;
+                }
+            }
         },
         {
             type: 'input',
             name: 'salary',
-            message: 'Please enter a salary:'
+            message: 'Please enter a salary:',
+            validate: aSalary => {
+                if (!isNaN(aSalary) && aSalary.trim() != '') {
+                    return true;
+                } else {
+                    console.log('\nPlease enter a number!');
+                    return false;
+                }
+            }
         }
     ])
     .then(data => {
@@ -180,12 +204,28 @@ AddEmp = () => {
         {
             type: 'input',
             name: 'first',
-            message: 'Please enter a first name:'
+            message: 'Please enter a first name:',
+            validate: aFirst => {
+                if (aFirst) {
+                    return true;
+                } else {
+                    console.log('Please enter a first name!');
+                    return false;
+                }
+            }
         },
         {
             type: 'input',
             name: 'last',
-            message: 'Please enter a last name:'
+            message: 'Please enter a last name:',
+            validate: aLast => {
+                if (aLast) {
+                    return true;
+                } else {
+                    console.log('Please enter a last name!');
+                    return false;
+                }
+            }
         }
     ]).then(data => {
         const parameters = [data.first, data.last];
