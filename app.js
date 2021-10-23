@@ -239,7 +239,55 @@ AddEmp = () => {
 };
 
 UpEmpRole = () => {
+    const empSQl = `SELECT * FROM employee`;
 
-}
+    db.query(empSQl, (err, row) => {
+        const empMap = row.map( ({id, first_name, last_name}) => ({value: id, name: first_name + ' ' + last_name}) );
+        
+        inquirer.prompt([
+            {
+              type: 'list',
+              name: 'empName',
+              message: "Please choose an employee to update:",
+              choices: empMap
+            }
+        ])
+        .then(answer => {
+            const employee = answer.empName;
+            const parameters = [employee];
+
+            const roleSQL = `SELECT * FROM role`;
+            db.query(roleSQL, (err, row) => {
+                const roleMap = row.map( ({id, title}) => ({value: id, name: title}) );
+                inquirer.prompt([
+                    {
+                      type: 'list',
+                      name: 'nRole',
+                      message: 'Choose a new role:',
+                      choices: roleMap
+                    }
+                ])
+                .then(final => {
+                    const nRole = final.nRole;
+                    parameters.push(nRole); 
+                    console.log(parameters);
+                    
+                    const rID = parameters[1];
+                    const eID = parameters[0];
+                    let sqlOrder = [];
+                    sqlOrder.push(rID);
+                    sqlOrder.push(eID);
+                    console.log(sqlOrder);
+
+                    const sql = `UPDATE employee
+                                SET role_id = ?
+                                WHERE id = ?`;
+                    db.query(sql, sqlOrder);
+                })
+                .then(viewEmployees);
+            });
+        });
+    });
+};
 
 //Choices: Array values can be objects containing a name (to display in list), a value (to save in the answers hash)
