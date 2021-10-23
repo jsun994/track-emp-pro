@@ -301,8 +301,7 @@ UpEmpRole = () => {
                 ])
                 .then(final => {
                     const nRole = final.nRole;
-                    parameters.push(nRole); 
-                    console.log(parameters);
+                    parameters.push(nRole);
                     //swap
                     const rID = parameters[1];
                     const eID = parameters[0];
