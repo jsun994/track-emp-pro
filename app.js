@@ -142,19 +142,39 @@ addRole = () => {
             type: 'input',
             name: 'salary',
             message: 'Please enter a salary:'
-        },
-        {
-            type: 'input',
-            name: 'dep_id',
-            message: 'Please enter a department id:'
         }
     ]).then(data => {
-        const parameters = [data.title, data.salary, data.dep_id];
-        const sql = `INSERT INTO role
-                    (title, salary, department_id)
-                    VALUES (?, ?, ?)`;
-        db.query(sql, parameters);
-        viewRoles();
+        const parameters = [data.title, data.salary];
+
+        const departmentSQL = `SELECT * FROM department`;
+        db.query(departmentSQL, (err, row) => {
+            if (err) throw err;
+
+            inquirer.prompt([
+                {
+                    type: 'list', 
+                    name: 'departChoice',
+                    message: "Please choice a department:",
+                    choices: row
+                }
+            ])
+            .then(answer => {
+                let departID;
+                for (let i = 0; i < row.length; i++){
+                    if (answer.departChoice == row[i].name){
+                        departID = row[i].id;
+                    }
+                }
+                parameters.push(departID);
+                console.log(parameters);
+
+                const sql = `INSERT INTO role
+                            (title, salary, department_id)
+                            VALUES (?, ?, ?)`;
+                db.query(sql, parameters);
+            })
+            .then(viewRoles);
+        });
     });
 };
 
