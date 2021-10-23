@@ -19,7 +19,7 @@ const promptUser = () => {
     inquirer.prompt ([
         {
         type: 'list',
-        name: 'choices', 
+        name: 'choice', 
         message: 'What would you like to do?',
         choices: [
             'View all departments', 
@@ -33,8 +33,14 @@ const promptUser = () => {
         }
     ])
     .then((answers) => {
-        if (answers.choices === 'View all departments') {
+        if (answers.choice === 'View all departments') {
             viewDepartments();
+        }
+        if (answers.choice === 'View all roles') {
+            viewRoles();
+        }
+        if (answers.choice === 'View all employees') {
+            viewEmployees();
         }
     })
 };
@@ -42,6 +48,28 @@ const promptUser = () => {
 viewDepartments = () => {
     console.log('all departments:');
     const sql = `SELECT * FROM department`;
+    
+    db.promise().query(sql)
+    .then(([rows]) => {
+        console.table(rows);
+    })
+    .then(promptUser);
+};
+
+viewRoles = () => {
+    console.log('all roles:');
+    const sql = `SELECT * FROM role`;
+    
+    db.promise().query(sql)
+    .then(([rows]) => {
+        console.table(rows);
+    })
+    .then(promptUser);
+};
+
+viewEmployees = () => {
+    console.log('all employees:');
+    const sql = `SELECT * FROM employee`;
     
     db.promise().query(sql)
     .then(([rows]) => {
