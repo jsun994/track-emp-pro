@@ -222,8 +222,8 @@ AddEmp = () => {
                         }
                     ])
                     .then(final => {
-                        const manager = final.manager;
-                        parameters.push(manager);
+                        const mgrID = final.manager;
+                        parameters.push(mgrID);
                         console.log(parameters);
     
                         const sql = `INSERT INTO employee
