@@ -11,7 +11,7 @@ const db = mysql.createConnection({
 
 db.connect(err => {
     if (err) throw err;
-    console.log('Database connected.');
+    console.log('database connected.');
     promptUser();
 });
 
@@ -19,15 +19,15 @@ const promptUser = () => {
     inquirer.prompt ([
         {
         type: 'list',
-        name: 'choice', 
+        name: 'choice',
         message: 'What would you like to do?',
         choices: [
-            'View all departments', 
-            'View all roles', 
-            'View all employees', 
-            'Add a department', 
-            'Add a role', 
-            'Add an employee', 
+            'View all departments',
+            'View all roles',
+            'View all employees',
+            'Add a department',
+            'Add a role',
+            'Add an employee',
             'Update an employee role'
             ]
         }
@@ -42,12 +42,13 @@ const promptUser = () => {
         if (answers.choice === 'View all employees') {
             viewEmployees();
         }
-    })
+    });
 };
 
 viewDepartments = () => {
     console.log('all departments:');
-    const sql = `SELECT department.name AS department_name,
+    const sql = `SELECT
+                department.name AS department_name,
                 department.id AS department_id
                 FROM department`;
     
@@ -67,7 +68,8 @@ viewRoles = () => {
                 department.name AS department_name
                 FROM role
                 LEFT JOIN department
-                ON role.department_id = department.id`;
+                ON role.department_id = department.id
+                `;
     
     db.promise().query(sql)
     .then( ([rows]) => {
@@ -78,7 +80,8 @@ viewRoles = () => {
 
 viewEmployees = () => {
     console.log('all employees:');
-    const sql = `SELECT emp.id AS emp_id,
+    const sql = `SELECT
+                emp.id AS emp_id,
                 emp.first_name,
                 emp.last_name,
                 role.title,
