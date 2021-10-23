@@ -19,7 +19,7 @@
     <a href="https://github.com/jsun994/track-emp-pro"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/jsun994/track-emp-pro">View Demo</a>
+    <a href="https://drive.google.com/file/d/1SXeDOHdQaq-27XR8ygquin9twIO6iLGF/view">View Demo</a>
     ·
     <a href="https://github.com/jsun994/track-emp-pro/issues">Report Bug</a>
     ·
@@ -54,7 +54,7 @@
 ## About The Project
 
 ![media1](./media/ss1.png)
-Demo - [Screencastify]()
+Demo Video - [Screencastify - Google Drive](https://drive.google.com/file/d/1SXeDOHdQaq-27XR8ygquin9twIO6iLGF/view)
 
 ### Built With
 
