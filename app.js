@@ -192,9 +192,7 @@ AddEmp = () => {
         const roleSQL = `SELECT role.id, role.title FROM role`;
         db.query(roleSQL, (err, row) => {
             if (err) throw err;
-            console.log(row);
             const rolesMap = row.map( ({id, title}) => ({value: id, name: title}) );
-            console.log(rolesMap);
             inquirer.prompt([
                 {
                     type: 'list', 
@@ -264,12 +262,11 @@ UpEmpRole = () => {
                 .then(final => {
                     const nRole = final.nRole;
                     parameters.push(nRole); 
+                    console.log(parameters);
                     //swap
                     const rID = parameters[1];
                     const eID = parameters[0];
-                    const sqlOrder = [];
-                    sqlOrder.push(rID);
-                    sqlOrder.push(eID);
+                    const sqlOrder = [rID, eID];
                     const sql = `UPDATE employee
                                 SET role_id = ?
                                 WHERE id = ?`;
