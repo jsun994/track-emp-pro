@@ -28,7 +28,8 @@ const promptUser = () => {
             'Add a department',
             'Add a role',
             'Add an employee',
-            'Update an employee role'
+            'Update an employee role',
+            'Quit'
             ]
         }
     ])
@@ -41,6 +42,21 @@ const promptUser = () => {
         }
         if (answers.choice === 'View all employees') {
             viewEmployees();
+        }
+        if (answers.choice === 'Add a department') {
+            addDepartment();
+        }
+        if (answers.choice === 'Add a role') {
+            addRole();
+        }
+        if (answers.choice === 'Add an employee') {
+            AddEmp();
+        }
+        if (answers.choice === 'Update an employee role') {
+            AddEmpRole();
+        }
+        if (answers.choice === 'Quit') {
+            process.exit();
         }
     });
 };
@@ -99,4 +115,77 @@ viewEmployees = () => {
         console.table(rows);
     })
     .then(promptUser);
+};
+
+addDepartment = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'department',
+            message: 'Please enter a department:'
+        }
+    ]).then(data => {
+        const sql = `INSERT INTO department (name) VALUES (?)`;
+        db.query(sql, data.department);
+        viewDepartments();
+    });
+};
+
+addRole = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'title',
+            message: 'Please enter a role:'
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'Please enter a salary:'
+        },
+        {
+            type: 'input',
+            name: 'dep_id',
+            message: 'Please enter a department id:'
+        }
+    ]).then(data => {
+        const parameters = [data.title, data.salary, data.dep_id];
+        const sql = `INSERT INTO role
+                    (title, salary, department_id)
+                    VALUES (?, ?, ?)`;
+        db.query(sql, parameters);
+        viewRoles();
+    });
+};
+
+AddEmp = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'first',
+            message: 'Please enter a first name:'
+        },
+        {
+            type: 'input',
+            name: 'last',
+            message: 'Please enter a last name:'
+        },
+        {
+            type: 'input',
+            name: 'role',
+            message: 'Please enter a role id:'
+        },
+        {
+            type: 'input',
+            name: 'manager',
+            message: 'Please enter a manager id:'
+        }
+    ]).then(data => {
+        const parameters = [data.first, data.last, data.role, data.manager];
+        const sql = `INSERT INTO employee
+                    (first_name, last_name, role_id, manager_id)
+                    VALUES (?, ?, ?, ?)`;
+        db.query(sql, parameters);
+        viewEmployees();
+    });
 };
