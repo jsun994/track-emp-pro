@@ -28,7 +28,7 @@ const promptUser = () => {
             'Add a department',
             'Add a role',
             'Add an employee',
-            'Update an employee role',
+            "Update an employee's role",
             'Quit'
             ]
         }
@@ -50,10 +50,10 @@ const promptUser = () => {
             addRole();
         }
         if (answers.choice === 'Add an employee') {
-            AddEmp();
+            addEmp();
         }
-        if (answers.choice === 'Update an employee role') {
-            UpEmpRole();
+        if (answers.choice === "Update an employee's role") {
+            upEmpRole();
         }
         if (answers.choice === 'Quit') {
             process.exit();
@@ -199,7 +199,7 @@ addRole = () => {
     });
 };
 
-AddEmp = () => {
+addEmp = () => {
     inquirer.prompt([
         {
             type: 'input',
@@ -271,7 +271,7 @@ AddEmp = () => {
     });
 };
 
-UpEmpRole = () => {
+upEmpRole = () => {
     const empSQl = `SELECT * FROM employee`;
     db.query(empSQl, (err, row) => {
         if (err) throw err;
