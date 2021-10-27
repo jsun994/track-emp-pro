@@ -182,6 +182,7 @@ addRole = () => {
                 }
             ])
             .then(answer => {
+                //find answer's department id
                 let deptID;
                 for (let i = 0; i < row.length; i++){
                     if (answer.departChoice == row[i].name){
@@ -229,10 +230,17 @@ addEmp = () => {
         }
     ]).then(data => {
         const parameters = [data.first, data.last];
-        const roleSQL = `SELECT role.id, role.title FROM role`;
+        const roleSQL = `SELECT * FROM role`;
         db.query(roleSQL, (err, row) => {
             if (err) throw err;
-            const rolesMap = row.map( ({id, title}) => ({value: id, name: title}) );
+            //roles map
+            const rolesMap = row.map(items => {
+                const container = {};
+                container.value = items.id;
+                container.name = items.title;
+                return container;
+            });
+            console.log(rolesMap);
             inquirer.prompt([
                 {
                     type: 'list', 
@@ -247,7 +255,13 @@ addEmp = () => {
                 const mgrSQL = `SELECT * FROM employee`;
                 db.query(mgrSQL, (err, row) => {
                     if (err) throw err;
-                    const mgrMap = row.map( ({id, first_name, last_name}) => ({value: id, name: first_name + ' ' + last_name}) );
+                    //manager map
+                    const mgrMap = row.map(items => {
+                        const container = {};
+                        container.value = items.id;
+                        container.name = items.first_name + ' ' + items.last_name;
+                        return container;
+                    });
                     inquirer.prompt([
                         {
                           type: 'list',
@@ -275,7 +289,13 @@ upEmpRole = () => {
     const empSQl = `SELECT * FROM employee`;
     db.query(empSQl, (err, row) => {
         if (err) throw err;
-        const empMap = row.map( ({id, first_name, last_name}) => ({value: id, name: first_name + ' ' + last_name}) );
+        //employee map
+        const empMap = row.map(items => {
+            const container = {};
+            container.value = items.id;
+            container.name = items.first_name + ' ' + items.last_name;
+            return container;
+        });
         inquirer.prompt([
             {
               type: 'list',
@@ -290,7 +310,12 @@ upEmpRole = () => {
             const roleSQL = `SELECT * FROM role`;
             db.query(roleSQL, (err, row) => {
                 if (err) throw err;
-                const roleMap = row.map( ({id, title}) => ({value: id, name: title}) );
+                const roleMap = row.map(items => {
+                    const container = {};
+                    container.value = items.id;
+                    container.name = items.title;
+                    return container;
+                });
                 inquirer.prompt([
                     {
                       type: 'list',
