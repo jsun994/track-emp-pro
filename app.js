@@ -71,7 +71,8 @@ viewDepartments = () => {
     const sql = `SELECT
                 department.name AS department_name,
                 department.id AS department_id
-                FROM department`;
+                FROM department
+                `;
     //async
     db.promise().query(sql)
     .then( ([rows]) => {
@@ -203,7 +204,8 @@ addRole = () => {
                 parameters.push(deptID);
                 const sql = `INSERT INTO role
                             (title, salary, department_id)
-                            VALUES (?, ?, ?)`;
+                            VALUES (?, ?, ?)
+                            `;
                 db.query(sql, parameters);
             })
             .then(viewRoles);
@@ -286,7 +288,8 @@ addEmployee = () => {
                         parameters.push(mgrID);
                         const sql = `INSERT INTO employee
                                     (first_name, last_name, role_id, manager_id)
-                                    VALUES (?, ?, ?, ?)`;
+                                    VALUES (?, ?, ?, ?)
+                                    `;
                         db.query(sql, parameters);
                     })
                     .then(viewEmployees);
@@ -345,7 +348,8 @@ updateRole = () => {
                     const sqlOrder = [rID, eID];
                     const sql = `UPDATE employee
                                 SET role_id = ?
-                                WHERE id = ?`;
+                                WHERE id = ?
+                                `;
                     db.query(sql, sqlOrder);
                 })
                 .then(viewEmployees);
