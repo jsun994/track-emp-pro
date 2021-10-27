@@ -1,7 +1,9 @@
+//requires
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
+//db
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -9,12 +11,14 @@ const db = mysql.createConnection({
     database: 'emp_tracker'
 });
 
+//connect
 db.connect(err => {
     if (err) throw err;
     console.log('database connected');
     promptUser();
 });
 
+//prompt user
 const promptUser = () => {
     inquirer.prompt ([
         {
@@ -50,10 +54,10 @@ const promptUser = () => {
             addRole();
         }
         if (answers.choice === 'Add an employee') {
-            addEmp();
+            addEmployee();
         }
         if (answers.choice === "Update an employee's role") {
-            upEmpRole();
+            updateRole();
         }
         if (answers.choice === 'Quit') {
             process.exit();
@@ -61,12 +65,14 @@ const promptUser = () => {
     });
 };
 
+//view all departments
 viewDepartments = () => {
     console.log('all departments:');
     const sql = `SELECT
                 department.name AS department_name,
                 department.id AS department_id
                 FROM department`;
+    //async
     db.promise().query(sql)
     .then( ([rows]) => {
         console.table(rows);
@@ -74,6 +80,7 @@ viewDepartments = () => {
     .then(promptUser);
 };
 
+//view all roles
 viewRoles = () => {
     console.log('all roles:');
     const sql = `SELECT
@@ -85,6 +92,7 @@ viewRoles = () => {
                 LEFT JOIN department
                 ON role.department_id = department.id
                 `;
+    //async
     db.promise().query(sql)
     .then( ([rows]) => {
         console.table(rows);
@@ -92,6 +100,7 @@ viewRoles = () => {
     .then(promptUser);
 };
 
+//view all employees
 viewEmployees = () => {
     console.log('all employees:');
     const sql = `SELECT
@@ -107,6 +116,7 @@ viewEmployees = () => {
                 LEFT JOIN department ON role.department_id = department.id
                 LEFT JOIN employee mgr ON emp.manager_id = mgr.id
                 `;
+    //async
     db.promise().query(sql)
     .then( ([rows]) => {
         console.table(rows);
@@ -114,7 +124,7 @@ viewEmployees = () => {
     .then(promptUser);
 };
 
-//add dept
+//add a department
 addDepartment = () => {
     inquirer.prompt([
         {
@@ -138,7 +148,7 @@ addDepartment = () => {
     });
 };
 
-//add role
+//add a role
 addRole = () => {
     inquirer.prompt([
         {
@@ -177,7 +187,7 @@ addRole = () => {
                 {
                     type: 'list', 
                     name: 'departChoice',
-                    message: 'Please choice a department:',
+                    message: 'Please choose a department:',
                     choices: row
                 }
             ])
@@ -189,6 +199,7 @@ addRole = () => {
                         deptID = row[i].id;
                     }
                 }
+                //push
                 parameters.push(deptID);
                 const sql = `INSERT INTO role
                             (title, salary, department_id)
@@ -200,7 +211,8 @@ addRole = () => {
     });
 };
 
-addEmp = () => {
+//add an employee
+addEmployee = () => {
     inquirer.prompt([
         {
             type: 'input',
@@ -240,7 +252,6 @@ addEmp = () => {
                 container.name = items.title;
                 return container;
             });
-            console.log(rolesMap);
             inquirer.prompt([
                 {
                     type: 'list', 
@@ -285,7 +296,8 @@ addEmp = () => {
     });
 };
 
-upEmpRole = () => {
+//update an employee's role
+updateRole = () => {
     const empSQl = `SELECT * FROM employee`;
     db.query(empSQl, (err, row) => {
         if (err) throw err;
@@ -310,7 +322,7 @@ upEmpRole = () => {
             const roleSQL = `SELECT * FROM role`;
             db.query(roleSQL, (err, row) => {
                 if (err) throw err;
-                const roleMap = row.map(items => {
+                const mapRole = row.map(items => {
                     const container = {};
                     container.value = items.id;
                     container.name = items.title;
@@ -320,8 +332,8 @@ upEmpRole = () => {
                     {
                       type: 'list',
                       name: 'nRole',
-                      message: 'Choose a new role:',
-                      choices: roleMap
+                      message: 'Please choose a new role:',
+                      choices: mapRole
                     }
                 ])
                 .then(final => {
@@ -341,4 +353,4 @@ upEmpRole = () => {
         });
     });
 };
-//Choices: Array values can be objects containing a name (to display in list), a value (to save in the answers hash).
+//choices: array values can be objects containing a name (to display in list), a value (to save in the answers hash).
